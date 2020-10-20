@@ -1,5 +1,8 @@
 # tv-shows-dashboard
 
+## Group Members
+Ryan Van (@ryan-van), Joy Dong (@joyydong), Kevin Yang (@kevinyang8), Eric Chen (@chen-eric)
+
 ## Project Description
 A web application that allows users to query for a TV show and then displays the lifetime of the TV show with episode summary statistics. Each query will return a table with columns as season numbers and rows as corresponding episodes for each season. In the table, we will display the rating (and other information tbd). The background color of the cell will be reflected according to the rating.
 
