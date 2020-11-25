@@ -4,14 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// api key: 8891d5cefed0da21234ba062e1c9a7d7
+// api read access token: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4ODkxZDVjZWZlZDBkYTIxMjM0YmEwNjJlMWM5YTdkNyIsInN1YiI6IjVmOGQzYTQ1Mzk3ZGYwMDAzOTVhMjNiNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mW_2Hf7S5Q17hc3VX0vZRVhpsNOQX9hDV7kA5pHw0e0
+
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <App />,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
