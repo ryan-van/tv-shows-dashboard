@@ -11,3 +11,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+table {
+	font-family: calibri, sans-serif;
+	border-collapse: collapse;
+}
+  
+td {
+	text-align: center;
+	padding: 4px;
+  width: 150px;
+  border: .75px solid #009688;
+}
+
+th {
+	border: 1.25px solid #009688;
+	text-align: center;
+	text-align: center;
+	padding: 4px;
+	width: 150px;
+	background-color:#C5D8D6
+}
