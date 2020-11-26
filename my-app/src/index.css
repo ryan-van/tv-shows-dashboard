@@ -16,12 +16,13 @@ table {
 	font-family: calibri, sans-serif;
 	border-collapse: collapse;
 }
-  
+
 td {
 	text-align: center;
 	padding: 4px;
-  width: 150px;
-  border: .75px solid #009688;
+  width: 25px;
+  height: 25px;
+  border: .75px solid;
 }
 
 th {
@@ -32,3 +33,138 @@ th {
 	width: 150px;
 	background-color:#C5D8D6
 }
+
+/* 0-0.9 FFFFFF */
+td[data-value^="0"]   { background-color: #FFFFFF; }
+td[data-value^=".1"]  { background-color: #FFFFFF; }
+td[data-value^=".2"]  { background-color: #FFFFFF; }
+td[data-value^=".3"]  { background-color: #FFFFFF; }
+td[data-value^=".4"]  { background-color: #FFFFFF; }
+td[data-value^=".5"]  { background-color: #FFFFFF; }
+td[data-value^=".6"]  { background-color: #FFFFFF; }
+td[data-value^=".7"]  { background-color: #FFFFFF; }
+td[data-value^=".8"]  { background-color: #FFFFFF; }
+td[data-value^=".9"]  { background-color: #FFFFFF; }
+
+/* 1-1.9 FF0000 */
+td[data-value^="1"]   { background-color: #FF0000; }
+td[data-value^="1.1"] { background-color: #FF0000; }
+td[data-value^="1.2"] { background-color: #FF0000; }
+td[data-value^="1.3"] { background-color: #FF0000; }
+td[data-value^="1.4"] { background-color: #FF0000; }
+td[data-value^="1.5"] { background-color: #FF0000; }
+td[data-value^="1.6"] { background-color: #FF0000; }
+td[data-value^="1.7"] { background-color: #FF0000; }
+td[data-value^="1.8"] { background-color: #FF0000; }
+td[data-value^="1.9"] { background-color: #FF0000; }
+
+/* 2-2.9 FF0044 */
+td[data-value^="2"]   { background-color: #FF0044; }
+td[data-value^="2.1"] { background-color: #FF0044; }
+td[data-value^="2.2"] { background-color: #FF0044; }
+td[data-value^="2.3"] { background-color: #FF0044; }
+td[data-value^="2.4"] { background-color: #FF0044; }
+td[data-value^="2.5"] { background-color: #FF0044; }
+td[data-value^="2.6"] { background-color: #FF0044; }
+td[data-value^="2.7"] { background-color: #FF0044; }
+td[data-value^="2.8"] { background-color: #FF0044; }
+td[data-value^="2.9"] { background-color: #FF0044; }
+
+/* 3-3.9 FF114F */
+td[data-value^="3"]   { background-color: #FF114F; }
+td[data-value^="3.1"] { background-color: #FF114F; }
+td[data-value^="3.2"] { background-color: #FF114F; }
+td[data-value^="3.3"] { background-color: #FF114F; }
+td[data-value^="3.4"] { background-color: #FF114F; }
+td[data-value^="3.5"] { background-color: #FF114F; }
+td[data-value^="3.6"] { background-color: #FF114F; }
+td[data-value^="3.7"] { background-color: #FF114F; }
+td[data-value^="3.8"] { background-color: #FF114F; }
+td[data-value^="3.9"] { background-color: #FF114F; }
+
+/* 4-4.5 FF334F */
+td[data-value^="4"]   { background-color: #FF334F; }
+td[data-value^="4.1"] { background-color: #FF334F; }
+td[data-value^="4.2"] { background-color: #FF334F; }
+td[data-value^="4.3"] { background-color: #FF334F; }
+td[data-value^="4.4"] { background-color: #FF334F; }
+
+/* 4.5-4.9 FF554F */
+td[data-value^="4.5"] { background-color: #FF554F; }
+td[data-value^="4.6"] { background-color: #FF554F; }
+td[data-value^="4.7"] { background-color: #FF554F; }
+td[data-value^="4.8"] { background-color: #FF554F; }
+td[data-value^="4.9"] { background-color: #FF554F; }
+
+/* 5-5.4 FF774F */
+td[data-value^="5"]   { background-color: #FF774F; }
+td[data-value^="5.1"] { background-color: #FF774F; }
+td[data-value^="5.2"] { background-color: #FF774F; }
+td[data-value^="5.3"] { background-color: #FF774F; }
+td[data-value^="5.4"] { background-color: #FF774F; }
+
+/* 5.5-5.9 FF994F */
+td[data-value^="5.5"] { background-color: #FF994F; }
+td[data-value^="5.6"] { background-color: #FF994F; }
+td[data-value^="5.7"] { background-color: #FF994F; }
+td[data-value^="5.8"] { background-color: #FF994F; }
+td[data-value^="5.9"] { background-color: #FF994F; }
+
+/* 6-6.4 FFBB4F */
+td[data-value^="6"]   { background-color: #FFBB4F; }
+td[data-value^="6.1"] { background-color: #FFBB4F; }
+td[data-value^="6.2"] { background-color: #FFBB4F; }
+td[data-value^="6.3"] { background-color: #FFBB4F; }
+td[data-value^="6.4"] { background-color: #FFBB4F; }
+
+/* 6.5-6.9 FFDD4F */
+td[data-value^="6.5"] { background-color: #FFDD4F; }
+td[data-value^="6.6"] { background-color: #FFDD4F; }
+td[data-value^="6.7"] { background-color: #FFDD4F; }
+td[data-value^="6.8"] { background-color: #FFDD4F; }
+td[data-value^="6.9"] { background-color: #FFDD4F; }
+
+/* 7-7.4 EFFF4F */
+td[data-value^="7"]   { background-color: #EFFF4F; }
+td[data-value^="7.1"] { background-color: #EFFF4F; }
+td[data-value^="7.2"] { background-color: #EFFF4F; }
+td[data-value^="7.3"] { background-color: #EFFF4F; }
+td[data-value^="7.4"] { background-color: #EFFF4F; }
+
+/* 7.5-7.9 CFFF4F */
+td[data-value^="7.5"] { background-color: #CFFF4F; }
+td[data-value^="7.6"] { background-color: #CFFF4F; }
+td[data-value^="7.7"] { background-color: #CFFF4F; }
+td[data-value^="7.8"] { background-color: #CFFF4F; }
+td[data-value^="7.9"] { background-color: #CFFF4F; }
+
+/* 8-8.4 AFFF4F */
+td[data-value^="8"]   { background-color: #AFFF4F; }
+td[data-value^="8.1"] { background-color: #AFFF4F; }
+td[data-value^="8.2"] { background-color: #AFFF4F; }
+td[data-value^="8.3"] { background-color: #AFFF4F; }
+td[data-value^="8.4"] { background-color: #AFFF4F; }
+
+/* 8.5-8.9 8FFF4F */
+td[data-value^="8.5"] { background-color: #8FFF4F; }
+td[data-value^="8.6"] { background-color: #8FFF4F; }
+td[data-value^="8.7"] { background-color: #8FFF4F; }
+td[data-value^="8.8"] { background-color: #8FFF4F; }
+td[data-value^="8.9"] { background-color: #8FFF4F; }
+
+/* 9-9.4 */
+td[data-value^="9"]   { background-color: #6FFF4F; }
+td[data-value^="9.1"] { background-color: #6FFF4F; }
+td[data-value^="9.2"] { background-color: #6FFF4F; }
+td[data-value^="9.3"] { background-color: #6FFF4F; }
+td[data-value^="9.4"] { background-color: #6FFF4F; }
+
+/* 9.5-9.9 */
+td[data-value^="9.5"] { background-color: #4FFF4F; }
+td[data-value^="9.6"] { background-color: #4FFF4F; }
+td[data-value^="9.7"] { background-color: #4FFF4F; }
+td[data-value^="9.8"] { background-color: #4FFF4F; }
+td[data-value^="9.9"] { background-color: #4FFF4F; }
+
+/* 10 */
+td[data-value^="10"]  { background-color: #00FF13; }

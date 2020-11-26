@@ -27,7 +27,7 @@ function RenderTable(props) {
     return (<h1>Enter a search query</h1>)
   }
   // TODO: GET RID OF THIS & add error handling for missing stuff
-  if (props.data.id == 7089) {
+  if (props.data.id === 7089) {
     return (<h1>Enter a search query</h1>)
   }
   console.log(props.data);
@@ -39,7 +39,7 @@ function RenderTable(props) {
     let season_number = 'season' + i;
     season = <tr>
       {props.data.seasons[season_number].map(index => (
-       <td> {index} </td>
+       <td data-value={index}> {index} </td>
       ))}
     </tr>
     all_seasons.push(season);
@@ -117,7 +117,17 @@ function Page() {
     <div>
       <SearchBar handleSubmit={handleSubmit} />
       <br />
-      <RenderTable data={values}/>
+      <div style={{marginLeft: '10%'}}>
+        <p>Episode Number</p>
+      </div>
+      <div style={{width: '100%'}}>
+        <div style={{width: '10%', float: 'left'}}>
+          <p>Season Number</p>
+        </div>
+        <div style={{marginLeft: '10%'}}>
+          <RenderTable data={values}/>
+        </div>
+      </div> 
     </div>
   );
 }
