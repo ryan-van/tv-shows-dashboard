@@ -10,6 +10,33 @@ const baseURL = 'https://api.themoviedb.org/3/';
 // GET /tv/{tv_id}/season/{season_number}
 // https://api.themoviedb.org/3/tv/2316/season/1?api_key=8891d5cefed0da21234ba062e1c9a7d7&language=en-US
 
+const { TextAnalyticsClient, AzureKeyCredential } = require("@azure/ai-text-analytics");
+const key = 'acbad60592304493a8bc92ef6cbe3f78';
+const endpoint = 'https://text-analytics-ucb-datathon.cognitiveservices.azure.com/';
+
+const textAnalyticsClient = new TextAnalyticsClient(endpoint,  new AzureKeyCredential(key));
+
+async function sentimentAnalysis(client){
+
+  const sentimentInput = [
+      "This product was absolutely terrible and I would never recommend this to anyone. Please remove this from the store immediately."
+  ];
+  const sentimentResult = await client.analyzeSentiment(sentimentInput);
+
+  sentimentResult.forEach(document => {
+      console.log(`ID: ${document.id}`);
+      console.log(`\tDocument Sentiment: ${document.sentiment}`);
+      console.log(`\tDocument Scores:`);
+      console.log(`\t\tPositive: ${document.confidenceScores.positive.toFixed(2)} \tNegative: ${document.confidenceScores.negative.toFixed(2)} \tNeutral: ${document.confidenceScores.neutral.toFixed(2)}`);
+      console.log(`\tSentences Sentiment(${document.sentences.length}):`);
+      document.sentences.forEach(sentence => {
+          console.log(`\t\tSentence sentiment: ${sentence.sentiment}`)
+          console.log(`\t\tSentences Scores:`);
+          console.log(`\t\tPositive: ${sentence.confidenceScores.positive.toFixed(2)} \tNegative: ${sentence.confidenceScores.negative.toFixed(2)} \tNeutral: ${sentence.confidenceScores.neutral.toFixed(2)}`);
+      });
+  });
+}
+
 function SearchBar(props) {
   return (
     <div className='center'>
@@ -133,6 +160,7 @@ function Page() {
 }
 
 function App() {
+  sentimentAnalysis(textAnalyticsClient);
   return (
     <div className="App">
       <header className="App-header"></header>
