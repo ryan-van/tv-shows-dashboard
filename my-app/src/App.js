@@ -16,26 +16,26 @@ const endpoint = 'https://text-analytics-ucb-datathon.cognitiveservices.azure.co
 
 const textAnalyticsClient = new TextAnalyticsClient(endpoint,  new AzureKeyCredential(key));
 
-async function sentimentAnalysis(client){
+// async function sentimentAnalysis(client){
 
-  const sentimentInput = [
-      "This product was absolutely terrible and I would never recommend this to anyone. Please remove this from the store immediately."
-  ];
-  const sentimentResult = await client.analyzeSentiment(sentimentInput);
+//   const sentimentInput = [
+//       "This product was absolutely terrible and I would never recommend this to anyone. Please remove this from the store immediately."
+//   ];
+//   const sentimentResult = await client.analyzeSentiment(sentimentInput);
 
-  sentimentResult.forEach(document => {
-      console.log(`ID: ${document.id}`);
-      console.log(`\tDocument Sentiment: ${document.sentiment}`);
-      console.log(`\tDocument Scores:`);
-      console.log(`\t\tPositive: ${document.confidenceScores.positive.toFixed(2)} \tNegative: ${document.confidenceScores.negative.toFixed(2)} \tNeutral: ${document.confidenceScores.neutral.toFixed(2)}`);
-      console.log(`\tSentences Sentiment(${document.sentences.length}):`);
-      document.sentences.forEach(sentence => {
-          console.log(`\t\tSentence sentiment: ${sentence.sentiment}`)
-          console.log(`\t\tSentences Scores:`);
-          console.log(`\t\tPositive: ${sentence.confidenceScores.positive.toFixed(2)} \tNegative: ${sentence.confidenceScores.negative.toFixed(2)} \tNeutral: ${sentence.confidenceScores.neutral.toFixed(2)}`);
-      });
-  });
-}
+//   sentimentResult.forEach(document => {
+//       console.log(`ID: ${document.id}`);
+//       console.log(`\tDocument Sentiment: ${document.sentiment}`);
+//       console.log(`\tDocument Scores:`);
+//       console.log(`\t\tPositive: ${document.confidenceScores.positive.toFixed(2)} \tNegative: ${document.confidenceScores.negative.toFixed(2)} \tNeutral: ${document.confidenceScores.neutral.toFixed(2)}`);
+//       console.log(`\tSentences Sentiment(${document.sentences.length}):`);
+//       document.sentences.forEach(sentence => {
+//           console.log(`\t\tSentence sentiment: ${sentence.sentiment}`)
+//           console.log(`\t\tSentences Scores:`);
+//           console.log(`\t\tPositive: ${sentence.confidenceScores.positive.toFixed(2)} \tNegative: ${sentence.confidenceScores.negative.toFixed(2)} \tNeutral: ${sentence.confidenceScores.neutral.toFixed(2)}`);
+//       });
+//   });
+// }
 
 function SearchBar(props) {
   return (
@@ -50,6 +50,9 @@ function SearchBar(props) {
 }
 
 function RenderTable(props) {
+  if (props.data.id === undefined) {
+    return (<h1>Please enter a search query for a valid movie.</h1>)
+  }
   if (Object.keys(props.data).length === 0 && props.data.constructor === Object) {
     return (<h1>Enter a search query</h1>)
   }
@@ -57,8 +60,6 @@ function RenderTable(props) {
   if (props.data.id === 7089) {
     return (<h1>Enter a search query</h1>)
   }
-  console.log(props.data);
-  console.log(props.data.seasons);
 
   let all_seasons = [];
   let season;
@@ -74,17 +75,60 @@ function RenderTable(props) {
 
   return (
     <table>
+      <tbody>
       {all_seasons}
+      </tbody>
     </table>
   );
+}
 
+function SimilarShows(props) {
+  if (props.data.id === undefined) {
+    return (<p></p>);
+  }
+  let arr = []
+  for (let i = 0; i < props.data.similarShows.length; i++) {
+    arr.push(<li>{props.data.similarShows[i]}</li>)
+  }
+  return (
+    <div>
+      Similar Shows:
+      <ul>{arr}</ul>
+    </div>
+    
+    );
+}
+
+function Reviews(props) {
+  if (props.data.id === undefined) {
+    return (<p></p>);
+  }
+  return (
+    <div>
+      Reviews:
+      <ul>
+        <li>
+          Top Positive Review: <br/>
+          {props.data.reviews.positive_quote}
+        </li>
+        <li>
+          Top Critical Review: <br/>
+          {props.data.reviews.negative_quote}
+        </li>
+        <li>
+          Top Neutral Review: <br/>
+          {props.data.reviews.neutral_quote}
+        </li>
+      </ul>
+    </div>
+  );
 }
 
 async function fetchId(query) {
   const url = ''.concat(baseURL, 'search/tv?api_key=', APIKEY, '&query=', encodeURIComponent(query), '&include_adult=false');
   let response = await fetch(url);
   let json_response = await response.json();
-  return json_response.results[0].id;
+  return json_response.total_pages !== 0 ? json_response.results[0].id : null;
 }
 
 async function fetchNumSeasons(id) {
@@ -115,6 +159,96 @@ async function fetchSeasons(id, numSeasons) {
   return newSeasons;
 }
 
+async function fetchSimilarShows(id) {
+  let url = ''.concat(baseURL, 'tv/', id, '/similar?api_key=', APIKEY, '&language=en-US&page=1');
+  let response = await fetch(url);
+  let json_response = await response.json();
+  let max = json_response.results.length < 5 ? json_response.results.length : 5;
+  let similarShows = []
+  while (similarShows.length !== max) {
+    let random = Math.floor(Math.random() * json_response.results.length);
+    if (!similarShows.includes(json_response.results[random].name)) {
+      similarShows.push(json_response.results[random].name);
+    }
+  }
+  return similarShows;
+}
+
+async function fetchReviews(id) {
+  let url = ''.concat(baseURL, 'tv/', id, '/reviews?api_key=', APIKEY, '&language=en-US&page=1');
+  let response = await fetch(url);
+  let json_response = await response.json();
+  if (json_response.results.length === 0) {
+    return null;
+  }
+  let review = [];
+  for (let i = 0; i < json_response.results.length; i++) {
+    let values = [];
+    const sentimentResult = await textAnalyticsClient.analyzeSentiment([json_response.results[i].content]);
+    sentimentResult.forEach(document => {
+      values.sentiment = document.sentiment;
+      values.positive = document.confidenceScores.positive.toFixed(2);
+      values.negative = document.confidenceScores.negative.toFixed(2);
+      values.neutral = document.confidenceScores.neutral.toFixed(2);
+      values.content = json_response.results[i].content
+    });
+    values.reviewer = json_response.author;
+    review.push(values);
+  }
+  
+  review.sort((a, b) => parseFloat(b.positive) - parseFloat(a.positive));
+  let finalReview = [];
+  let sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content]);
+  sentimentResult.forEach(document => {
+    let prevMax = -1;
+    let maxQuote = "";
+    document.sentences.forEach(sentence => {
+      let posScore = sentence.confidenceScores.positive.toFixed(2);
+      if (prevMax < posScore) {
+        prevMax = posScore;
+        maxQuote = sentence.text;
+      }
+    });
+    finalReview.positive_full = review[0].content;
+    finalReview.positive_quote = maxQuote;
+  });
+  
+
+  review.sort((a, b) => parseFloat(b.negative) - parseFloat(a.negative));
+  sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content]);
+  sentimentResult.forEach(document => {
+    let prevMax = -1;
+    let maxQuote = "";
+    document.sentences.forEach(sentence => {
+      let posScore = sentence.confidenceScores.negative.toFixed(2);
+      if (prevMax < posScore) {
+        prevMax = posScore;
+        maxQuote = sentence.text;
+      }
+    });
+    finalReview.negative_full = review[0].content;
+    finalReview.negative_quote = maxQuote;
+  });
+
+  review.sort((a, b) => parseFloat(b.neutral) - parseFloat(a.neutral));
+  sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content]);
+  sentimentResult.forEach(document => {
+    let prevMax = -1;
+    let maxQuote = "";
+    document.sentences.forEach(sentence => {
+      let posScore = sentence.confidenceScores.neutral.toFixed(2);
+      if (prevMax < posScore) {
+        prevMax = posScore;
+        maxQuote = sentence.text;
+      }
+    });
+    finalReview.neutral_full = review[0].content;
+    finalReview.neutral_quote = maxQuote;
+  });
+  
+  return finalReview;
+}
+
 function Page() {
   const [values, setValues] = useState({});
 
@@ -128,13 +262,21 @@ function Page() {
   useEffect (() => {
     async function fetchData() {
       let id = await fetchId(values.query);
+      if (id === null || id === 7089) {
+        return;
+      }
+
       let newValues = JSON.parse(JSON.stringify(values));;
       newValues.id = id;
 
       let numSeasons = await fetchNumSeasons(id);
       let seasons = await fetchSeasons(id, numSeasons);
+      let similarShows = await fetchSimilarShows(id);
+      let reviews = await fetchReviews(id);
       newValues.num_seasons = numSeasons;
       newValues.seasons = seasons;
+      newValues.similarShows = similarShows;
+      newValues.reviews = reviews;
       setValues(newValues);
     }
     fetchData();
@@ -149,18 +291,25 @@ function Page() {
       </div>
       <div style={{width: '100%'}}>
         <div style={{width: '10%', float: 'left'}}>
-          <p>Season Number</p>
+          <p>Season</p>
+          <p>Number</p>
         </div>
         <div style={{marginLeft: '10%'}}>
           <RenderTable data={values}/>
         </div>
       </div> 
+      <div>
+        <SimilarShows data={values}/>
+      </div>
+      <div>
+        <Reviews data={values}/>
+      </div>
     </div>
   );
 }
 
 function App() {
-  sentimentAnalysis(textAnalyticsClient);
+  // sentimentAnalysis(textAnalyticsClient);
   return (
     <div className="App">
       <header className="App-header"></header>
