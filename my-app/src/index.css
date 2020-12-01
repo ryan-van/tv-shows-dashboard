@@ -19,18 +19,22 @@ table {
 
 td {
 	text-align: center;
-	padding: 4px;
-  width: 25px;
-  height: 25px;
-  border: .75px solid;
+	padding: 2px;
+  width: 20px;
+  height: 20px;
+}
+
+.rotate {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
 th {
-	border: 1.25px solid #009688;
+	/* border: .1px solid; */
 	text-align: center;
-	padding: 4px;
-	width: 150px;
-	background-color:#C5D8D6
+	padding: 2px;
+	width: 20px;
+	background-color:#f1f1f1
 }
 
 /* 0-0.9 FFFFFF */

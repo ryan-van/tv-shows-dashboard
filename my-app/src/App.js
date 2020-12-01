@@ -43,7 +43,7 @@ function SearchBar(props) {
     <div class='center'>
     <form onSubmit={props.handleSubmit}>
       <div class="ui one column stackable center aligned page grid">
-        <div class="column twelve wide">
+        <div class="column eight wide">
           <div class="ui fluid icon input" style={{marginTop:'8%'}}>
             <input type="text" name="show" placeholder="Search for a TV Show"/>
             <i class="search icon"></i>
@@ -59,7 +59,7 @@ function RenderTable(props) {
   if (props.data.query !== undefined && props.data.id === undefined) {
     return (
       <div class="ui one column stackable center aligned page grid">
-        <div class="column twelve wide">
+        <div class="column eight wide">
           <div class="ui segment">
             <div class="ui active inverted dimmer">
               <div class="ui small text loader">Loading... if it exists ;)</div>
@@ -71,7 +71,8 @@ function RenderTable(props) {
       );
   }
   if (props.data.id === undefined) {
-    return (<h1 style={{textAlign: 'center'}}>Please enter a search query for a valid movie.</h1>)
+    return (<p></p>);
+    // return (<h1 style={{textAlign: 'center'}}>Please enter a search query for a valid tv show.</h1>)
   }
   if (Object.keys(props.data).length === 0 && props.data.constructor === Object) {
     return (<h1 style={{textAlign: 'center'}}>Enter a search query</h1>)
@@ -82,10 +83,14 @@ function RenderTable(props) {
   }
 
   let all_seasons = [];
-  let season;
+  let season = <th rowspan={props.data.num_seasons + 2}><p class="rotate">Season Number</p></th>;
+  all_seasons.push(season);
+  let max_episodes = 0;
   for (let i = 1; i <= props.data.num_seasons; i++) {
     let season_number = 'season' + i;
+    max_episodes = max_episodes < props.data.seasons[season_number].length ? props.data.seasons[season_number].length : max_episodes; 
     season = <tr>
+      <th>{i}</th>
       {props.data.seasons[season_number].map(index => (
        <td data-value={index}> {index} </td>
       ))}
@@ -93,17 +98,25 @@ function RenderTable(props) {
     all_seasons.push(season);
   }
 
+  let episode_header = [];
+  episode_header.push(<th></th>)
+  episode_header.push(<th></th>)
+  for (let i = 1; i <= max_episodes; i++) {
+    episode_header.push(<th>{i}</th>)
+  }
+
   return (
     <div>
       <h2 style={{textAlign: 'center'}}>{props.data.name}</h2>
+      <br/>
       <div class="ui one column stackable center aligned page grid">
-      <div class="column twelve wide"></div>
-        {/* <div style={{width: '100%'}}></div> */}
-          <table class='ui celled table'>
-            <tbody>
-            {all_seasons}
-            </tbody>
-          </table>
+        <table class='ui collapsing table'>
+          <th colspan={max_episodes + 2}>Episode Number</th>
+          <tbody>
+          <tr>{episode_header}</tr>
+          {all_seasons}
+          </tbody>
+        </table>
       </div>
       <br/>
     </div>
@@ -129,16 +142,16 @@ function SimilarShows(props) {
     )}
     return (
       <div>
-        <h2 style={{textAlign: 'center'}}>Similar Shows:</h2>
-      <div class="ui one column stackable center aligned page grid">
-        <div class="column twelve wide">
+        <h2 style={{textAlign: 'center'}}>Similar Shows</h2>
+        <br />
+        <div class="ui one column stackable center aligned page grid">
           <div class="ui segment">
             <div class="ui buttons">
               {arr}
             </div>
           </div>
         </div>
-      </div>
+        <br />
       </div>
     );
 }
@@ -150,12 +163,11 @@ function Reviews(props) {
   if (props.data.reviews === null) {
     return <h2 style={{textAlign: 'center'}}>No Reviews</h2>
   }
-  console.log(props.data);
   return (
     <div class="ui two column centered grid divided">
       <div class="three column centered row">
         <div class="column">
-          <h2 style={{textAlign: 'center'}}>Top Positive Review:</h2> <br/>
+          <h2 style={{textAlign: 'center'}}>Top Positive Review</h2> <br/>
           <p style={{textAlign: 'center'}} id='demo'><i>"{props.data.reviews.positive_quote}"</i></p>
           <p style={{textAlign: 'center'}}><i>-{props.data.reviews.positive_author}</i></p>
           <button onClick={() => props.handlePositiveReview(props.data.reviews)} class="basic ui button centered">
@@ -164,7 +176,7 @@ function Reviews(props) {
         </div>
 
         <div class="column">
-          <h2 style={{textAlign: 'center'}}>Top Critical Review:</h2> <br/>
+          <h2 style={{textAlign: 'center'}}>Top Critical Review</h2> <br/>
           <p id='test' style={{textAlign: 'center'}}><i>"{props.data.reviews.negative_quote}"</i></p>
           <p style={{textAlign: 'center'}}><i>-{props.data.reviews.negative_author}</i></p>
           <button onClick={() => props.handleNegativeReview(props.data.reviews)} class="basic ui button centered">
