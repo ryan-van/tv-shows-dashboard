@@ -72,7 +72,7 @@ function RenderTable(props) {
         <div class="column eight wide">
           <div class="ui segment">
             <div class="ui active inverted dimmer">
-              <div class="ui small text loader">Loading... if it works ;)</div>
+              <div class="ui small text loader">Loading... if it exists ;)</div>
             </div>
             <p></p><p></p><h1></h1>
           </div>
