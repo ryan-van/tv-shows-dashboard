@@ -110,7 +110,7 @@ function RenderTable(props) {
       <h2 style={{textAlign: 'center'}}>{props.data.name}</h2>
       <br/>
       <div class="ui one column stackable center aligned page grid">
-        <table class='ui collapsing table'>
+        <table>
           <th colspan={max_episodes + 2}>Episode Number</th>
           <tbody>
           <tr>{episode_header}</tr>
