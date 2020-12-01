@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./index.css"
 import 'semantic-ui-css/semantic.min.css'
+import "./index.css"
 
 const APIKEY = '8891d5cefed0da21234ba062e1c9a7d7';
 const baseURL = 'https://api.themoviedb.org/3/';
@@ -57,12 +57,22 @@ function SearchBar(props) {
 
 function RenderTable(props) {
   if (props.data.query !== undefined && props.data.id === undefined) {
+    if (props.data.timeout) {
+      return (
+      <div class="ui one column stackable center aligned page grid">
+      <div class="column eight wide">
+        <div class="ui segment">
+          <p>Could not find TV Show</p>
+        </div>
+      </div>
+    </div>
+    )}
     return (
       <div class="ui one column stackable center aligned page grid">
         <div class="column eight wide">
           <div class="ui segment">
             <div class="ui active inverted dimmer">
-              <div class="ui small text loader">Loading... if it exists ;)</div>
+              <div class="ui small text loader">Loading...</div>
             </div>
             <p></p><p></p><h1></h1>
           </div>
@@ -83,7 +93,7 @@ function RenderTable(props) {
   }
 
   let all_seasons = [];
-  let season = <th rowspan={props.data.num_seasons + 2}><p class="rotate">Season Number</p></th>;
+  let season = <th rowSpan={props.data.num_seasons + 2}><p class="rotate">Season Number</p></th>;
   all_seasons.push(season);
   let max_episodes = 0;
   for (let i = 1; i <= props.data.num_seasons; i++) {
@@ -107,11 +117,12 @@ function RenderTable(props) {
 
   return (
     <div>
-      <h2 style={{textAlign: 'center'}}>{props.data.name}</h2>
+      <h1 class='medium text' style={{textAlign: 'center'}}>{props.data.name}</h1>
+      <h2 style={{textAlign: 'center'}}>Average Rating Per Episode</h2>
       <br/>
       <div class="ui one column stackable center aligned page grid">
         <table>
-          <th colspan={max_episodes + 2}>Episode Number</th>
+          <th colSpan={max_episodes + 2}>Episode Number</th>
           <tbody>
           <tr>{episode_header}</tr>
           {all_seasons}
@@ -310,18 +321,28 @@ function Page() {
   const handleSubmit = (event) => {
     event.preventDefault();
     let newValues = {};
+    newValues.submitted = true;
+    newValues.entered = true;
     newValues.query = event.target.show.value;
     setValues(newValues);
   }
 
   useEffect (() => {
     async function fetchData() {
+      let newValues = JSON.parse(JSON.stringify(values));
+      const timer = setTimeout(() => {
+        newValues.timeout = true;
+        setValues(newValues);
+        return;
+      }, 7000);
+      newValues.submitted = false;
+      setValues(newValues);
       let ret = await fetchId(values.query);
       if (ret === null || ret[0] === 7089) {
         return;
       }
-
-      let newValues = JSON.parse(JSON.stringify(values));;
+      clearTimeout(timer);
+      
       let id = ret[0]
       newValues.id = id;
       newValues.name = ret[1];
@@ -334,10 +355,12 @@ function Page() {
       newValues.seasons = seasons;
       newValues.similarShows = similarShows;
       newValues.reviews = reviews;
+      newValues.submitted = false;
       setValues(newValues);
     }
     fetchData();
-  }, [values.query]);
+    // return () => clearTimeout(timer);
+  }, [values.submitted]);
   
   const handleNegativeReview = (event) => {
     if (event !== null) {
@@ -360,7 +383,7 @@ function Page() {
   return (
     <div>
       <div style={{marginTop:'5%'}}>
-        <h1 style={{textAlign: 'center'}}>TV-Shows-Dashboard</h1>
+        <h1 class='large text' style={{textAlign: 'center'}}>TV-Shows-Dashboard</h1>
       </div>
       
       <SearchBar handleSubmit={handleSubmit} />
