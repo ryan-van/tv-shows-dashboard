@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./index.css"
+import 'semantic-ui-css/semantic.min.css'
 
 const APIKEY = '8891d5cefed0da21234ba062e1c9a7d7';
 const baseURL = 'https://api.themoviedb.org/3/';
@@ -39,11 +40,16 @@ const textAnalyticsClient = new TextAnalyticsClient(endpoint,  new AzureKeyCrede
 
 function SearchBar(props) {
   return (
-    <div className='center'>
+    <div class='center'>
     <form onSubmit={props.handleSubmit}>
-      <label>TV Show: </label>
-      <input type="text" name="show" />
-      <input type="submit" value="Search Show" />
+      <div class="ui one column stackable center aligned page grid">
+        <div class="column twelve wide">
+          <div class="ui fluid icon input" style={{marginTop:'8%'}}>
+            <input type="text" name="show" placeholder="Search for a TV Show"/>
+            <i class="search icon"></i>
+          </div>
+        </div>
+      </div>
     </form>
     </div>
   );
@@ -51,17 +57,28 @@ function SearchBar(props) {
 
 function RenderTable(props) {
   if (props.data.query !== undefined && props.data.id === undefined) {
-    return (<h1>Loading...</h1>);
+    return (
+      <div class="ui one column stackable center aligned page grid">
+        <div class="column twelve wide">
+          <div class="ui segment">
+            <div class="ui active inverted dimmer">
+              <div class="ui small text loader">Loading... if it exists ;)</div>
+            </div>
+            <p></p><p></p><h1></h1>
+          </div>
+        </div>
+      </div>
+      );
   }
   if (props.data.id === undefined) {
-    return (<h1>Please enter a search query for a valid movie.</h1>)
+    return (<h1 style={{textAlign: 'center'}}>Please enter a search query for a valid movie.</h1>)
   }
   if (Object.keys(props.data).length === 0 && props.data.constructor === Object) {
-    return (<h1>Enter a search query</h1>)
+    return (<h1 style={{textAlign: 'center'}}>Enter a search query</h1>)
   }
   // TODO: GET RID OF THIS & add error handling for missing stuff
   if (props.data.id === 7089) {
-    return (<h1>Enter a search query</h1>)
+    return (<h1 style={{textAlign: 'center'}}>Enter a search query</h1>)
   }
 
   let all_seasons = [];
@@ -78,22 +95,17 @@ function RenderTable(props) {
 
   return (
     <div>
-      <h2>Episode Ratings for: {props.data.name}</h2>
-      <div style={{marginLeft: '10%'}}>
-        <p>Episode Number</p>
-      </div>
-      <div style={{width: '100%'}}></div>
-        <div style={{width: '10%', float: 'left'}}>
-          <p>Season</p>
-          <p>Number</p>
-        </div>
-        <div style={{marginLeft: '10%'}}>
-          <table>
+      <h2 style={{textAlign: 'center'}}>{props.data.name}</h2>
+      <div class="ui one column stackable center aligned page grid">
+      <div class="column twelve wide"></div>
+        {/* <div style={{width: '100%'}}></div> */}
+          <table class='ui celled table'>
             <tbody>
             {all_seasons}
             </tbody>
           </table>
-        </div>
+      </div>
+      <br/>
     </div>
   );
 }
@@ -102,20 +114,32 @@ function SimilarShows(props) {
   if (props.data.id === undefined) {
     return (<p></p>);
   }
+  if (props.data.similarShows.length === 0) {
+    return <h2 style={{textAlign: 'center'}}>No Similar Shows</h2>
+  }
+
   let arr = []
   for (let i = 0; i < props.data.similarShows.length; i++) {
-    arr.push(<li>
+    arr.push(
+      <div>
       <form onSubmit={props.handleSubmit}>
-      <input type="submit" name="show" value={props.data.similarShows[i]}></input>
+      <input class="ui button" type="submit" name="show" value={props.data.similarShows[i]}></input>
       </form>
-      </li>)
-  }
-  return (
-    <div>
-      Similar Shows:
-      <ul>{arr}</ul>
-    </div>
-    
+      </div>
+    )}
+    return (
+      <div>
+        <h2 style={{textAlign: 'center'}}>Similar Shows:</h2>
+      <div class="ui one column stackable center aligned page grid">
+        <div class="column twelve wide">
+          <div class="ui segment">
+            <div class="ui buttons">
+              {arr}
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
     );
 }
 
@@ -124,24 +148,33 @@ function Reviews(props) {
     return (<p></p>);
   }
   if (props.data.reviews === null) {
-    return <p>No Reviews</p>
+    return <h2 style={{textAlign: 'center'}}>No Reviews</h2>
   }
+  console.log(props.data);
   return (
-    <div>
-      Reviews:
-      <ul>
-        <li>
-          Top Positive Review: <br/>
-          {props.data.reviews.positive_quote}
-        </li>
-        <li>
-          Top Critical Review: <br/>
-          {props.data.reviews.negative_quote}
-        </li>
-      </ul>
+    <div class="ui two column centered grid divided">
+      <div class="three column centered row">
+        <div class="column">
+          <h2 style={{textAlign: 'center'}}>Top Positive Review:</h2> <br/>
+          <p style={{textAlign: 'center'}} id='demo'><i>"{props.data.reviews.positive_quote}"</i></p>
+          <p style={{textAlign: 'center'}}><i>-{props.data.reviews.positive_author}</i></p>
+          <button onClick={() => props.handlePositiveReview(props.data.reviews)} class="basic ui button centered">
+            Show full review
+          </button>
+        </div>
+
+        <div class="column">
+          <h2 style={{textAlign: 'center'}}>Top Critical Review:</h2> <br/>
+          <p id='test' style={{textAlign: 'center'}}><i>"{props.data.reviews.negative_quote}"</i></p>
+          <p style={{textAlign: 'center'}}><i>-{props.data.reviews.negative_author}</i></p>
+          <button onClick={() => props.handleNegativeReview(props.data.reviews)} class="basic ui button centered">
+            Show full review
+          </button>
+        </div>
+      </div>
     </div>
   );
-}
+} 
 
 async function fetchId(query) {
   const url = ''.concat(baseURL, 'search/tv?api_key=', APIKEY, '&query=', encodeURIComponent(query), '&include_adult=false');
@@ -216,7 +249,7 @@ async function fetchReviews(id) {
       values.neutral = document.confidenceScores.neutral.toFixed(2);
       values.content = json_response.results[i].content
     });
-    values.reviewer = json_response.author;
+    values.reviewer = json_response.results[i].author;
     review.push(values);
   }
   
@@ -235,6 +268,7 @@ async function fetchReviews(id) {
     });
     finalReview.positive_full = review[0].content;
     finalReview.positive_quote = maxQuote;
+    finalReview.positive_author = review[0].reviewer;
   });
   
 
@@ -245,13 +279,14 @@ async function fetchReviews(id) {
     let maxQuote = "";
     document.sentences.forEach(sentence => {
       let posScore = sentence.confidenceScores.negative.toFixed(2);
-      if (prevMax < posScore) {
+      if (prevMax <= posScore) {
         prevMax = posScore;
         maxQuote = sentence.text;
       }
     });
     finalReview.negative_full = review[0].content;
     finalReview.negative_quote = maxQuote;
+    finalReview.negative_author = review[0].reviewer;
   });
   
   return finalReview;
@@ -292,15 +327,37 @@ function Page() {
     fetchData();
   }, [values.query]);
   
+  const handleNegativeReview = (event) => {
+    if (event !== null) {
+      let newValues = JSON.parse(JSON.stringify(values));
+      newValues.reviews = event;
+      newValues.reviews.negative_quote = newValues.reviews.negative_full;
+      setValues(newValues);
+    }
+  }
+
+  const handlePositiveReview = (event) => {
+    if (event !== null) {
+      let newValues = JSON.parse(JSON.stringify(values));
+      newValues.reviews = event;
+      newValues.reviews.positive_quote = newValues.reviews.positive_full;
+      setValues(newValues);
+    }
+  }
+
   return (
     <div>
+      <div style={{marginTop:'5%'}}>
+        <h1 style={{textAlign: 'center'}}>TV-Shows-Dashboard</h1>
+      </div>
+      
       <SearchBar handleSubmit={handleSubmit} />
       <br />
       <RenderTable data={values}/>
       <br />
       <SimilarShows data={values} handleSubmit={handleSubmit}/>
       <br />
-      <Reviews data={values}/>
+      <Reviews data={values} handleNegativeReview={handleNegativeReview} handlePositiveReview={handlePositiveReview}/>
     </div>
   );
 }
