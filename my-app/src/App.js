@@ -57,16 +57,16 @@ function SearchBar(props) {
 
 function RenderTable(props) {
   if (props.data.query !== undefined && props.data.id === undefined) {
-    if (props.data.timeout) {
-      return (
-      <div class="ui one column stackable center aligned page grid">
-      <div class="column eight wide">
-        <div class="ui segment">
-          <p>Could not find TV Show</p>
-        </div>
-      </div>
-    </div>
-    )}
+    // if (props.data.timeout) {
+    //   return (
+    //   <div class="ui one column stackable center aligned page grid">
+    //   <div class="column eight wide">
+    //     <div class="ui segment">
+    //       <p>Could not find TV Show</p>
+    //     </div>
+    //   </div>
+    // </div>
+    // )}
     return (
       <div class="ui one column stackable center aligned page grid">
         <div class="column eight wide">
@@ -264,7 +264,8 @@ async function fetchReviews(id) {
   let review = [];
   for (let i = 0; i < json_response.results.length; i++) {
     let values = [];
-    const sentimentResult = await textAnalyticsClient.analyzeSentiment([json_response.results[i].content]);
+    let maxSize = json_response.results[i].content.length > 5000 ? 5000 : json_response.results[i].content.length;
+    const sentimentResult = await textAnalyticsClient.analyzeSentiment([json_response.results[i].content.slice(0, maxSize)]);
     sentimentResult.forEach(document => {
       values.sentiment = document.sentiment;
       values.positive = document.confidenceScores.positive.toFixed(2);
@@ -278,7 +279,8 @@ async function fetchReviews(id) {
   
   review.sort((a, b) => parseFloat(b.positive) - parseFloat(a.positive));
   let finalReview = [];
-  let sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content]);
+  let maxSize = review[0].content.length > 5000 ? 5000 : review[0].content.length;
+  let sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content.slice(0, maxSize)]);
   sentimentResult.forEach(document => {
     let prevMax = -1;
     let maxQuote = "";
@@ -296,7 +298,8 @@ async function fetchReviews(id) {
   
 
   review.sort((a, b) => parseFloat(b.negative) - parseFloat(a.negative));
-  sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content]);
+  maxSize = review[0].content.length > 5000 ? 5000 : review[0].content.length;
+  sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content.slice(0, maxSize)]);
   sentimentResult.forEach(document => {
     let prevMax = -1;
     let maxQuote = "";
@@ -330,18 +333,18 @@ function Page() {
   useEffect (() => {
     async function fetchData() {
       let newValues = JSON.parse(JSON.stringify(values));
-      const timer = setTimeout(() => {
-        newValues.timeout = true;
-        setValues(newValues);
-        return;
-      }, 7000);
+      // const timer = setTimeout(() => {
+      //   newValues.timeout = true;
+      //   setValues(newValues);
+      //   return;
+      // }, 7000);
       newValues.submitted = false;
       setValues(newValues);
       let ret = await fetchId(values.query);
       if (ret === null || ret[0] === 7089) {
         return;
       }
-      clearTimeout(timer);
+      // clearTimeout(timer);
       
       let id = ret[0]
       newValues.id = id;
@@ -355,7 +358,7 @@ function Page() {
       newValues.seasons = seasons;
       newValues.similarShows = similarShows;
       newValues.reviews = reviews;
-      newValues.submitted = false;
+      // newValues.submitted = false;
       setValues(newValues);
     }
     fetchData();
