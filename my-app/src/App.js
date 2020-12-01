@@ -50,6 +50,9 @@ function SearchBar(props) {
 }
 
 function RenderTable(props) {
+  if (props.data.query !== undefined && props.data.id === undefined) {
+    return (<h1>Loading...</h1>);
+  }
   if (props.data.id === undefined) {
     return (<h1>Please enter a search query for a valid movie.</h1>)
   }
@@ -74,11 +77,24 @@ function RenderTable(props) {
   }
 
   return (
-    <table>
-      <tbody>
-      {all_seasons}
-      </tbody>
-    </table>
+    <div>
+      <h2>Episode Ratings for: {props.data.name}</h2>
+      <div style={{marginLeft: '10%'}}>
+        <p>Episode Number</p>
+      </div>
+      <div style={{width: '100%'}}></div>
+        <div style={{width: '10%', float: 'left'}}>
+          <p>Season</p>
+          <p>Number</p>
+        </div>
+        <div style={{marginLeft: '10%'}}>
+          <table>
+            <tbody>
+            {all_seasons}
+            </tbody>
+          </table>
+        </div>
+    </div>
   );
 }
 
@@ -88,7 +104,11 @@ function SimilarShows(props) {
   }
   let arr = []
   for (let i = 0; i < props.data.similarShows.length; i++) {
-    arr.push(<li>{props.data.similarShows[i]}</li>)
+    arr.push(<li>
+      <form onSubmit={props.handleSubmit}>
+      <input type="submit" name="show" value={props.data.similarShows[i]}></input>
+      </form>
+      </li>)
   }
   return (
     <div>
@@ -103,6 +123,9 @@ function Reviews(props) {
   if (props.data.id === undefined) {
     return (<p></p>);
   }
+  if (props.data.reviews === null) {
+    return <p>No Reviews</p>
+  }
   return (
     <div>
       Reviews:
@@ -115,10 +138,6 @@ function Reviews(props) {
           Top Critical Review: <br/>
           {props.data.reviews.negative_quote}
         </li>
-        <li>
-          Top Neutral Review: <br/>
-          {props.data.reviews.neutral_quote}
-        </li>
       </ul>
     </div>
   );
@@ -128,7 +147,12 @@ async function fetchId(query) {
   const url = ''.concat(baseURL, 'search/tv?api_key=', APIKEY, '&query=', encodeURIComponent(query), '&include_adult=false');
   let response = await fetch(url);
   let json_response = await response.json();
-  return json_response.total_pages !== 0 ? json_response.results[0].id : null;
+  let ret = [];
+  if (json_response.total_pages !== 0) {
+    ret[0] = json_response.results[0].id
+    ret[1] = json_response.results[0].name
+  }
+  return json_response.total_pages !== 0 ? ret : null;
 }
 
 async function fetchNumSeasons(id) {
@@ -229,22 +253,6 @@ async function fetchReviews(id) {
     finalReview.negative_full = review[0].content;
     finalReview.negative_quote = maxQuote;
   });
-
-  review.sort((a, b) => parseFloat(b.neutral) - parseFloat(a.neutral));
-  sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content]);
-  sentimentResult.forEach(document => {
-    let prevMax = -1;
-    let maxQuote = "";
-    document.sentences.forEach(sentence => {
-      let posScore = sentence.confidenceScores.neutral.toFixed(2);
-      if (prevMax < posScore) {
-        prevMax = posScore;
-        maxQuote = sentence.text;
-      }
-    });
-    finalReview.neutral_full = review[0].content;
-    finalReview.neutral_quote = maxQuote;
-  });
   
   return finalReview;
 }
@@ -261,13 +269,15 @@ function Page() {
 
   useEffect (() => {
     async function fetchData() {
-      let id = await fetchId(values.query);
-      if (id === null || id === 7089) {
+      let ret = await fetchId(values.query);
+      if (ret === null || ret[0] === 7089) {
         return;
       }
 
       let newValues = JSON.parse(JSON.stringify(values));;
+      let id = ret[0]
       newValues.id = id;
+      newValues.name = ret[1];
 
       let numSeasons = await fetchNumSeasons(id);
       let seasons = await fetchSeasons(id, numSeasons);
@@ -286,24 +296,11 @@ function Page() {
     <div>
       <SearchBar handleSubmit={handleSubmit} />
       <br />
-      <div style={{marginLeft: '10%'}}>
-        <p>Episode Number</p>
-      </div>
-      <div style={{width: '100%'}}>
-        <div style={{width: '10%', float: 'left'}}>
-          <p>Season</p>
-          <p>Number</p>
-        </div>
-        <div style={{marginLeft: '10%'}}>
-          <RenderTable data={values}/>
-        </div>
-      </div> 
-      <div>
-        <SimilarShows data={values}/>
-      </div>
-      <div>
-        <Reviews data={values}/>
-      </div>
+      <RenderTable data={values}/>
+      <br />
+      <SimilarShows data={values} handleSubmit={handleSubmit}/>
+      <br />
+      <Reviews data={values}/>
     </div>
   );
 }
