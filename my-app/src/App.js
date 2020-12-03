@@ -44,10 +44,14 @@ function SearchBar(props) {
     <form onSubmit={props.handleSubmit}>
       <div class="ui one column stackable center aligned page grid">
         <div class="column eight wide">
+          
           <div class="ui fluid icon input" style={{marginTop:'8%'}}>
             <input type="text" name="show" placeholder="Search for a TV Show"/>
-            <i class="search icon"></i>
-          </div>
+            <i type="submit" class="search icon"></i>
+          </div>    
+          <div class="ui fluid icon input" style={{marginTop:'7%'}}></div>      
+          <button class="ui button" type="submit">Search</button>
+            
         </div>
       </div>
     </form>
@@ -56,12 +60,23 @@ function SearchBar(props) {
 }
 
 function RenderTable(props) {
+  if (props.data.query === "") {
+    return (
+      <div class="ui one column stackable center aligned page grid">
+        <div class="column eight wide">
+          <div class="ui segment">
+            Please enter a non-empty search.
+          </div>
+        </div>
+      </div>
+      );
+  }
   if (props.data.query !== undefined && props.data.id === undefined) {
     // if (props.data.timeout) {
     //   return (
     //   <div class="ui one column stackable center aligned page grid">
     //   <div class="column eight wide">
-    //     <div class="ui segment">
+    //     <div class="ui segm  ent">
     //       <p>Could not find TV Show</p>
     //     </div>
     //   </div>
@@ -325,7 +340,7 @@ function Page() {
     event.preventDefault();
     let newValues = {};
     newValues.submitted = true;
-    newValues.entered = true;
+    // newValues.entered = true;
     newValues.query = event.target.show.value;
     setValues(newValues);
   }
@@ -340,6 +355,10 @@ function Page() {
       // }, 7000);
       newValues.submitted = false;
       setValues(newValues);
+      if (values.query === "") {
+        return;
+      }
+
       let ret = await fetchId(values.query);
       if (ret === null || ret[0] === 7089) {
         return;
