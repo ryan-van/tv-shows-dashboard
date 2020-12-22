@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/tv-shows-dashboard/static/css/main.3552510f.chunk.css",
+    "main.js": "/tv-shows-dashboard/static/js/main.32aa1bc7.chunk.js",
+    "main.js.map": "/tv-shows-dashboard/static/js/main.32aa1bc7.chunk.js.map",
+    "runtime-main.js": "/tv-shows-dashboard/static/js/runtime-main.17c0178a.js",
+    "runtime-main.js.map": "/tv-shows-dashboard/static/js/runtime-main.17c0178a.js.map",
+    "static/css/2.69983923.chunk.css": "/tv-shows-dashboard/static/css/2.69983923.chunk.css",
+    "static/js/2.e93e3269.chunk.js": "/tv-shows-dashboard/static/js/2.e93e3269.chunk.js",
+    "static/js/2.e93e3269.chunk.js.map": "/tv-shows-dashboard/static/js/2.e93e3269.chunk.js.map",
+    "static/js/3.e3adf20f.chunk.js": "/tv-shows-dashboard/static/js/3.e3adf20f.chunk.js",
+    "static/js/3.e3adf20f.chunk.js.map": "/tv-shows-dashboard/static/js/3.e3adf20f.chunk.js.map",
+    "index.html": "/tv-shows-dashboard/index.html",
+    "static/css/2.69983923.chunk.css.map": "/tv-shows-dashboard/static/css/2.69983923.chunk.css.map",
+    "static/css/main.3552510f.chunk.css.map": "/tv-shows-dashboard/static/css/main.3552510f.chunk.css.map",
+    "static/js/2.e93e3269.chunk.js.LICENSE.txt": "/tv-shows-dashboard/static/js/2.e93e3269.chunk.js.LICENSE.txt",
+    "static/media/semantic.min.css": "/tv-shows-dashboard/static/media/outline-icons.ddae9b1b.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.17c0178a.js",
+    "static/css/2.69983923.chunk.css",
+    "static/js/2.e93e3269.chunk.js",
+    "static/css/main.3552510f.chunk.css",
+    "static/js/main.32aa1bc7.chunk.js"
+  ]
+}
