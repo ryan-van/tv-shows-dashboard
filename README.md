@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # tv-shows-dashboard
 
 ## Group Members
@@ -22,12 +21,3 @@ For example, a user can search for the show _The Good Place_. This would display
 We'll be using the [TMDB API](https://www.themoviedb.org/documentation/api) to fetch the TV show rating scores. We have a registered API key.
 
 To use the API, we need to first get the TMDB TV show ID before searching for each season.
-
-
-## TA's Comment (Nov 1st, 2020)
-- Feasibility: I read the documentation of the API, and it looks easy-to-use and should serve this project well.
-- Scope: It's moderate to a bit safe. Since the API provides so much interesting information regarding a TV show, I would encourage you to implement some cool effects in curating the TV show statistics. You need to demo your project in front of the whole class, so definitely try to build something awesome. 
-- Requirements: Satisfied.
-=======
-# tv-shows-dashboard
->>>>>>> 396d49f3244d2b41490fc9f33a62794ffd28a8c8
