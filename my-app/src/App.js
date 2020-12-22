@@ -11,11 +11,13 @@ const baseURL = 'https://api.themoviedb.org/3/';
 // GET /tv/{tv_id}/season/{season_number}
 // https://api.themoviedb.org/3/tv/2316/season/1?api_key=8891d5cefed0da21234ba062e1c9a7d7&language=en-US
 
-const { TextAnalyticsClient, AzureKeyCredential } = require("@azure/ai-text-analytics");
-const key = 'acbad60592304493a8bc92ef6cbe3f78';
-const endpoint = 'https://text-analytics-ucb-datathon.cognitiveservices.azure.com/';
 
-const textAnalyticsClient = new TextAnalyticsClient(endpoint,  new AzureKeyCredential(key));
+// azure analytics
+// const { TextAnalyticsClient, AzureKeyCredential } = require("@azure/ai-text-analytics");
+// const key = 'acbad60592304493a8bc92ef6cbe3f78';
+// const endpoint = 'https://text-analytics-ucb-datathon.cognitiveservices.azure.com/';
+
+// const textAnalyticsClient = new TextAnalyticsClient(endpoint,  new AzureKeyCredential(key));
 
 // async function sentimentAnalysis(client){
 
@@ -276,59 +278,89 @@ async function fetchReviews(id) {
   if (json_response.results.length === 0) {
     return null;
   }
-  let review = [];
+
+  let maxIndex = 0;
+  let minIndex = json_response.results.length - 1;
   for (let i = 0; i < json_response.results.length; i++) {
-    let values = [];
-    let maxSize = json_response.results[i].content.length > 5000 ? 5000 : json_response.results[i].content.length;
-    const sentimentResult = await textAnalyticsClient.analyzeSentiment([json_response.results[i].content.slice(0, maxSize)]);
-    sentimentResult.forEach(document => {
-      values.sentiment = document.sentiment;
-      values.positive = document.confidenceScores.positive.toFixed(2);
-      values.negative = document.confidenceScores.negative.toFixed(2);
-      values.neutral = document.confidenceScores.neutral.toFixed(2);
-      values.content = json_response.results[i].content
-    });
-    values.reviewer = json_response.results[i].author;
-    review.push(values);
-  }
-  
-  review.sort((a, b) => parseFloat(b.positive) - parseFloat(a.positive));
-  let finalReview = [];
-  let maxSize = review[0].content.length > 5000 ? 5000 : review[0].content.length;
-  let sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content.slice(0, maxSize)]);
-  sentimentResult.forEach(document => {
-    let prevMax = -1;
-    let maxQuote = "";
-    document.sentences.forEach(sentence => {
-      let posScore = sentence.confidenceScores.positive.toFixed(2);
-      if (prevMax < posScore) {
-        prevMax = posScore;
-        maxQuote = sentence.text;
+    let rate = json_response.results[i].author_details['rating'];
+    if (json_response.results[i].content !== "") {
+      if (json_response.results[minIndex].author_details['rating'] > rate) {
+        minIndex = i;
       }
-    });
-    finalReview.positive_full = review[0].content;
-    finalReview.positive_quote = maxQuote;
-    finalReview.positive_author = review[0].reviewer;
-  });
+      if (json_response.results[maxIndex].author_details['rating'] < rate) {
+        maxIndex = i;
+      }
+    }
+  }
+  console.log(maxIndex);
+  console.log(minIndex);
+
+  let finalReview = [];
+  finalReview.positive_full = json_response.results[maxIndex].content;
+  let pos_size = finalReview.positive_full.length < 100 ? finalReview.positive_full.length : 100;
+  finalReview.positive_quote = json_response.results[maxIndex].content.slice(0, pos_size) + "...";
+  finalReview.positive_author = json_response.results[maxIndex].author;
+
+  // let finalReview = [];
+  finalReview.negative_full = json_response.results[minIndex].content;
+  let neg_size = finalReview.positive_full.length < 100 ? finalReview.positive_full.length : 100;
+  finalReview.negative_quote = json_response.results[minIndex].content.slice(0, neg_size) + "...";
+  finalReview.negative_author = json_response.results[minIndex].author;
+
+  // azure analytics
+  // let review = [];
+  // for (let i = 0; i < json_response.results.length; i++) {
+  //   let values = [];
+  //   let maxSize = json_response.results[i].content.length > 5000 ? 5000 : json_response.results[i].content.length;
+  //   const sentimentResult = await textAnalyticsClient.analyzeSentiment([json_response.results[i].content.slice(0, maxSize)]);
+  //   sentimentResult.forEach(document => {
+  //     values.sentiment = document.sentiment;
+  //     values.positive = document.confidenceScores.positive.toFixed(2);
+  //     values.negative = document.confidenceScores.negative.toFixed(2);
+  //     values.neutral = document.confidenceScores.neutral.toFixed(2);
+  //     values.content = json_response.results[i].content
+  //   });
+  //   values.reviewer = json_response.results[i].author;
+  //   review.push(values);
+  // }
+  
+  // review.sort((a, b) => parseFloat(b.positive) - parseFloat(a.positive));
+  // let finalReview = [];
+  // let maxSize = review[0].content.length > 5000 ? 5000 : review[0].content.length;
+  // let sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content.slice(0, maxSize)]);
+  // sentimentResult.forEach(document => {
+  //   let prevMax = -1;
+  //   let maxQuote = "";
+  //   document.sentences.forEach(sentence => {
+  //     let posScore = sentence.confidenceScores.positive.toFixed(2);
+  //     if (prevMax < posScore) {
+  //       prevMax = posScore;
+  //       maxQuote = sentence.text;
+  //     }
+  //   });
+  //   finalReview.positive_full = review[0].content;
+  //   finalReview.positive_quote = maxQuote;
+  //   finalReview.positive_author = review[0].reviewer;
+  // });
   
 
-  review.sort((a, b) => parseFloat(b.negative) - parseFloat(a.negative));
-  maxSize = review[0].content.length > 5000 ? 5000 : review[0].content.length;
-  sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content.slice(0, maxSize)]);
-  sentimentResult.forEach(document => {
-    let prevMax = -1;
-    let maxQuote = "";
-    document.sentences.forEach(sentence => {
-      let posScore = sentence.confidenceScores.negative.toFixed(2);
-      if (prevMax <= posScore) {
-        prevMax = posScore;
-        maxQuote = sentence.text;
-      }
-    });
-    finalReview.negative_full = review[0].content;
-    finalReview.negative_quote = maxQuote;
-    finalReview.negative_author = review[0].reviewer;
-  });
+  // review.sort((a, b) => parseFloat(b.negative) - parseFloat(a.negative));
+  // maxSize = review[0].content.length > 5000 ? 5000 : review[0].content.length;
+  // sentimentResult = await textAnalyticsClient.analyzeSentiment([review[0].content.slice(0, maxSize)]);
+  // sentimentResult.forEach(document => {
+  //   let prevMax = -1;
+  //   let maxQuote = "";
+  //   document.sentences.forEach(sentence => {
+  //     let posScore = sentence.confidenceScores.negative.toFixed(2);
+  //     if (prevMax <= posScore) {
+  //       prevMax = posScore;
+  //       maxQuote = sentence.text;
+  //     }
+  //   });
+  //   finalReview.negative_full = review[0].content;
+  //   finalReview.negative_quote = maxQuote;
+  //   finalReview.negative_author = review[0].reviewer;
+  // });
   
   return finalReview;
 }
